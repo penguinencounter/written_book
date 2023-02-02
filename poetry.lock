@@ -1946,18 +1946,18 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 
 [[package]]
 name = "pytest-insta"
-version = "0.1.10"
+version = "0.1.11"
 description = "A practical snapshot testing plugin for pytest"
 category = "dev"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pytest-insta-0.1.10.tar.gz", hash = "sha256:27670ed8aa63cf34726106586dadadb12137102e22372ec918e64ee524d56f1f"},
-    {file = "pytest_insta-0.1.10-py3-none-any.whl", hash = "sha256:3043c4a668224f473df3de1d60fb356e356687b6931338c42c487abd0c9a19d8"},
+    {file = "pytest-insta-0.1.11.tar.gz", hash = "sha256:cc0f338a8ac215dbf3b690198dc24a1c5987e2bef269f85170d415039cce06e5"},
+    {file = "pytest_insta-0.1.11-py3-none-any.whl", hash = "sha256:c31af45255a8da234a73eff7649e297a053ffa22ba21806457f0fae66fc85f8a"},
 ]
 
 [package.dependencies]
-pytest = ">=6.0.2,<7.0.0"
+pytest = ">=6.0.2"
 wrapt = ">=1.12.1,<2.0.0"
 
 [[package]]
@@ -3126,4 +3126,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "17c370c56c3f23dad0137ab27fa8df6f826f5aa90cdeae253c94694046472b54"
+content-hash = "ce73bad3d5ea9e9c1678d6f13f979df2a0b5f0853b213f205038f9bbcf442696"
