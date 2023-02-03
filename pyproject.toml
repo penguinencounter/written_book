@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "FIXME"
+name = "written_book"
 version = "0.0.0"
-description = "FIXME"
-authors = ["FIXME"]
+description = "In-game documentation generator for Minecraft datapacks"
+authors = ["PenguinEncounter"]
 license = "MIT"
 
 homepage = "https://github.com/FIXME/FIXME"
