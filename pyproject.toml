@@ -27,11 +27,11 @@ beet = ">=0.45.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-black = "^21.11b1"
-isort = "^5.10.1"
+black = "^23.1"
+isort = "^5.12.0"
 python-semantic-release = "^7.22.0"
-mudkip = "^0.4.14"
-pytest-insta = "^0.1.10"
+mudkip = "^0.8.0"
+pytest-insta = "^0.1.11"
 lectern = ">=0.18.1"
 
 [tool.pytest.ini_options]
