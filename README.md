@@ -1,23 +1,22 @@
-# FIXME
+# written_book
 
-[![GitHub Actions](https://github.com/FIXME/FIXME/workflows/CI/badge.svg)](https://github.com/FIXME/FIXME/actions)
+[![GitHub Actions](https://github.com/penguinencounter/written_book/workflows/CI/badge.svg)](https://github.com/FIXME/FIXME/actions)
 [![PyPI](https://img.shields.io/pypi/v/FIXME.svg)](https://pypi.org/project/FIXME/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/FIXME.svg)](https://pypi.org/project/FIXME/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-[![Discord](https://img.shields.io/discord/900530660677156924?color=7289DA&label=discord&logo=discord&logoColor=fff)](https://discord.gg/98MdSGMm8j)
 
-> FIXME
+> Dynamic in-game datapack documentation for Minecraft.
 
 ## Introduction
 
-FIXME
+fonts everywhere
 
 ## Installation
 
 The package can be installed with `pip`.
 
 ```bash
-$ pip install FIXME
+$ pip install written_book
 ```
 
 ## Getting started
@@ -48,9 +47,9 @@ $ npm run check
 The code follows the [`black`](https://github.com/psf/black) code style. Import statements are sorted with [`isort`](https://pycqa.github.io/isort/).
 
 ```bash
-$ poetry run isort FIXME examples tests
-$ poetry run black FIXME examples tests
-$ poetry run black --check FIXME examples tests
+$ poetry run isort written_book examples tests
+$ poetry run black written_book examples tests
+$ poetry run black --check written_book examples tests
 ```
 
 ---

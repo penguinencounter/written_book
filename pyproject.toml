@@ -19,7 +19,7 @@ keywords = [
   "FIXME"
 ]
 
-include = ["FIXME/py.typed"]
+include = ["written_book/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -36,7 +36,7 @@ lectern = ">=0.18.1"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "tests FIXME --doctest-modules"
+addopts = "tests written_book --doctest-modules"
 doctest_optionflags = "NORMALIZE_WHITESPACE IGNORE_EXCEPTION_DETAIL ELLIPSIS"
 
 [tool.black]
@@ -48,10 +48,10 @@ profile = "black"
 
 [tool.semantic_release]
 branch = "main"
-version_variable = ["FIXME/__init__.py:__version__"]
+version_variable = ["written_book/__init__.py:__version__"]
 version_toml = "pyproject.toml:tool.poetry.version"
 major_on_zero = false
-build_command = "poetry build && poetry run mudkip build --update-gh-pages --repository https://x-access-token:${GH_TOKEN}@github.com/FIXME/FIXME"
+build_command = "poetry build && poetry run mudkip build --update-gh-pages --repository https://x-access-token:${GH_TOKEN}@github.com/penguinencounter/written_book"
 
 [tool.mudkip]
 preset = "furo"

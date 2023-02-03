@@ -1,0 +1,7 @@
+{
+  "name": "written-book-example",
+  "output": "out",
+  "pipeline": [
+    "written_book"
+  ]
+}
