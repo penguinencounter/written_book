@@ -3,7 +3,7 @@ __all__ = [
 ]
 
 import click
-from beet import Context, Function, JsonFile
+from beet import Context
 
 
 def beet_default(ctx: Context):

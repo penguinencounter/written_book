@@ -34,7 +34,7 @@ def odd(value: int) -> int:
     return value + 1 if value % 2 == 0 else value
 
 
-shared_asset_cache = {}
+shared_asset_cache: typing.Dict[str, Image.Image] = {}
 
 
 class AssetResource:
@@ -42,18 +42,26 @@ class AssetResource:
     Represents an image asset that is used during the compositing process.
     """
 
-    def __init__(self, source: str, crop: typing.Tuple[int, int, int, int] = None):
+    def __init__(
+        self,
+        source: str,
+        crop: typing.Optional[typing.Tuple[int, int, int, int]] = None,
+        source_image: typing.Optional[Image.Image] = None,
+    ):
         self.source_path = _normalize(source)
-        self.source: typing.Optional[Image.Image] = None
         self._static = False
+        self.source: Image.Image = source_image or self._load()
         if crop is None:
-            self._load()
-            self.crop = (0, 0, self.source.width, self.source.height)
-            self.destroy()
+            self.crop: typing.Tuple[int, int, int, int] = (
+                0,
+                0,
+                self.source.width,
+                self.source.height,
+            )
         else:
-            self.crop = crop
+            self.crop: typing.Tuple[int, int, int, int] = crop
 
-    def _load(self):
+    def _load(self) -> Image.Image:
         """
         Load the source image into memory.
         :return:
@@ -61,39 +69,24 @@ class AssetResource:
         if self._static:
             return self.source
         if self.source_path in shared_asset_cache:
-            self.source = shared_asset_cache[self.source_path]
-            return
+            return shared_asset_cache[self.source_path]
         else:
-            self.source = Image.open(self.source_path).convert("RGBA")
-            self.source.load()
+            source: Image.Image = Image.open(self.source_path).convert("RGBA")
+            source.load()
             shared_asset_cache[self.source_path] = self.source
+            return source
 
     def get(self) -> Image.Image:
         """
-        Get the source image, loading it into memory if necessary.
+        Get the source image, cropped.
         :return:
         """
-        if self.source is None:
-            self._load()
         return self.source.crop(self.crop)
-
-    def destroy(self, for_all: bool = False):
-        """
-        Destroy the source image to free up memory.
-        :return:
-        """
-        if self._static:
-            return
-        self.source = None
-        if for_all and self.source_path in shared_asset_cache:
-            del shared_asset_cache[self.source_path]
 
     @classmethod
     def from_image(cls, image: Image.Image):
-        i = cls("", (0, 0, 0, 0))
-        i.source = image
+        i = cls("", None, image)
         i._static = True
-        i.crop = (0, 0, image.width, image.height)
         return i
 
 
@@ -187,7 +180,7 @@ class Feature2D(Feature):
         self,
         asset: AssetResource,
         justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
-        overrides: typing.List[Feature2DOverride] = None,
+        overrides: typing.Optional[typing.List[Feature2DOverride]] = None,
     ):
         super().__init__(asset)
         if isinstance(justify, str):
@@ -204,7 +197,6 @@ class Feature2D(Feature):
                     "(hint: try resizing the override with the 'crop' option)\n    "
                     "(hint: if you don't want to do that, use an overlay instead)"
                 )
-            override.asset.destroy()  # We don't need the image right now
 
     @property
     def justify(self) -> typing.Tuple[Justify2D.X, Justify2D.Y]:

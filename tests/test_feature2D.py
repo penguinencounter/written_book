@@ -1,3 +1,5 @@
+import typing
+
 import pytest
 from PIL import Image
 
@@ -39,12 +41,12 @@ override_32 = Feature2DOverride(dummy_image_32, 0, 0)
 
 
 @pytest.mark.parametrize("anchor,expected", all_anchors.items())
-def test_anchor_parsing(anchor, expected):
+def test_anchor_parsing(anchor: str, expected: typing.Tuple[Justify2D.X, Justify2D.Y]):
     assert Feature2D.get_justify(anchor) == expected
 
 
 @pytest.mark.parametrize("anchor,expected", all_anchors.items())
-def test_initializer(anchor, expected):
+def test_initializer(anchor: str, expected: typing.Tuple[Justify2D.X, Justify2D.Y]):
     assert Feature2D(dummy_image_16, anchor).justify == expected
 
 
