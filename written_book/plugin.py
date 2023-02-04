@@ -2,8 +2,8 @@ __all__ = [
     "beet_default",
 ]
 
-from beet import Context, Function, JsonFile
 import click
+from beet import Context, Function, JsonFile
 
 
 def beet_default(ctx: Context):
