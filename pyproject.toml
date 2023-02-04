@@ -24,6 +24,7 @@ include = ["written_book/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.8"
 beet = ">=0.45.3"
+pillow = "^9.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
