@@ -1,4 +1,3 @@
-import random
 import typing
 
 import pytest
@@ -80,7 +79,7 @@ def test_incompatible_override():
 @pytest.mark.parametrize("image", tiling_test_sizes.values())
 @pytest.mark.parametrize("size", [(20, 20), (19, 19), (20, 19), (19, 20)])
 def test_even_tile_size(
-        image: AssetResource, anchor: str, size: typing.Tuple[int, int]
+    image: AssetResource, anchor: str, size: typing.Tuple[int, int]
 ):
     f = Feature2D(image, anchor)
     t = f.tile(*size)
