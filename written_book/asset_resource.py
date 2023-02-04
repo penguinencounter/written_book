@@ -96,6 +96,7 @@ class Feature:
 
 
 class Justify2D:
+    @enum.unique
     class X(enum.Enum):
         LEFT = "left"
         CENTER = "center"
@@ -104,6 +105,7 @@ class Justify2D:
         def __repr__(self):
             return f"{self.value}"
 
+    @enum.unique
     class Y(enum.Enum):
         TOP = "top"
         CENTER = "center"
@@ -125,6 +127,7 @@ class Justify2D:
     y_word = {"top": Y.TOP, "center": Y.CENTER, "bottom": Y.BOTTOM}
 
 
+@enum.unique
 class Justify1D(enum.Enum):
     START = "start"
     CENTER = "center"
@@ -143,9 +146,24 @@ class Justify1D(enum.Enum):
         }[name.lower()]
 
 
-class Feature2DOverride:
-    def __init__(self, asset: AssetResource, x: int, y: int):
+@enum.unique
+class Direction(enum.Enum):
+    HORIZONTAL = "horizontal"
+    VERTICAL = "vertical"
+
+    @classmethod
+    def from_name(cls, name: str) -> "Direction":
+        return {"horizontal": cls.HORIZONTAL, "vertical": cls.VERTICAL}[name.lower()]
+
+
+class FeatureOverride:
+    def __init__(self, asset: AssetResource):
         self.asset = asset
+
+
+class Feature2DOverride(FeatureOverride):
+    def __init__(self, asset: AssetResource, x: int, y: int):
+        super().__init__(asset)
         self.x = x
         self.y = y
 
@@ -237,8 +255,28 @@ class Feature2D(Feature):
                 if (vx, vy) in self.overrides:
                     override = self.overrides[(vx, vy)]
                     tiled.paste(override.asset.get(), (x * img.width, y * img.height))
+                else:
+                    tiled.paste(img, (x * img.width, y * img.height))
 
+        # Crop to the desired size using the justification
+        crop_from = [0, 0]
+        if self.justifyX == Justify2D.X.CENTER:
+            crop_from[0] = (tiled.width - width) // 2
+        elif self.justifyX == Justify2D.X.RIGHT:
+            crop_from[0] = tiled.width - width
+        if self.justifyY == Justify2D.Y.CENTER:
+            crop_from[1] = (tiled.height - height) // 2
+        elif self.justifyY == Justify2D.Y.BOTTOM:
+            crop_from[1] = tiled.height - height
+        crop_to = [crop_from[0] + width, crop_from[1] + height]
+        tiled = tiled.crop((crop_from[0], crop_from[1], crop_to[0], crop_to[1]))
         return tiled
+
+
+class Feature1DOverride(FeatureOverride):
+    def __init__(self, asset: AssetResource, x: int):
+        super().__init__(asset)
+        self.x = x
 
 
 class Feature1D(Feature):
@@ -253,12 +291,60 @@ class Feature1D(Feature):
         return Justify1D.from_name(code)
 
     def __init__(
-        self, asset: AssetResource, justify: typing.Union[str, Justify1D] = "center"
+        self,
+        asset: AssetResource,
+        justify: typing.Union[str, Justify1D] = "center",
+        direction: Direction = Direction.HORIZONTAL,
+        overrides: typing.Optional[typing.List[Feature1DOverride]] = None,
     ):
         super().__init__(asset)
         if isinstance(justify, str):
             justify = Justify1D.from_name(justify)
         self.justify = justify
+        self.direction = direction
+        self.overrides: typing.Dict[int, Feature1DOverride] = {
+            o.x: o for o in (overrides or [])
+        }
+
+    def tile(self, length: int):
+        """
+        Tile the asset to the given length.
+        :param length: The length to tile to.
+        :return: The tiled image.
+        """
+        img = self._asset.get()
+        if self.direction == Direction.VERTICAL:
+            img = img.transpose(Image.ROTATE_90)
+        # Round up to the next multiple of the asset size...
+        tiled = Image.new("RGBA", (odd(next_multiple(length, img.width)), img.height))
+        tile_count = tiled.width // img.width
+        # Calculate the "origin" tile
+        center_pos = 0
+        if self.justify == Justify1D.CENTER:
+            center_pos = tile_count // 2
+        elif self.justify == Justify1D.END:
+            center_pos = tile_count - 1
+
+        # Paste that thing all over the place
+        for x in range(tile_count):
+            vx = x - center_pos
+            if vx in self.overrides:
+                override = self.overrides[vx]
+                tiled.paste(override.asset.get(), (x * img.width, 0))
+            else:
+                tiled.paste(img, (x * img.width, 0))
+
+        # Crop to the desired size using the justification
+        crop_from = 0
+        if self.justify == Justify1D.CENTER:
+            crop_from = (tiled.width - length) // 2
+        elif self.justify == Justify1D.END:
+            crop_from = tiled.width - length
+        crop_to = crop_from + length
+        tiled = tiled.crop((crop_from, 0, crop_to, img.height))
+        if self.direction == Direction.VERTICAL:
+            tiled = tiled.transpose(Image.ROTATE_270)
+        return tiled
 
 
 if __name__ == "__main__":
