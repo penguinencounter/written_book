@@ -1,6 +1,6 @@
 import pytest
 
-from written_book.asset_resource import Feature1D, Justify1D, AssetResource
+from written_book.asset_resource import AssetResource, Feature1D, Justify1D
 
 all_anchors = {
     "start": Justify1D.START,
@@ -9,7 +9,7 @@ all_anchors = {
     "left": Justify1D.START,
     "right": Justify1D.END,
     "top": Justify1D.START,
-    "bottom": Justify1D.END
+    "bottom": Justify1D.END,
 }
 dummy_asset = AssetResource(".", (0, 0, 0, 0))
 

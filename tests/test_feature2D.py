@@ -1,7 +1,12 @@
 import pytest
 from PIL import Image
 
-from written_book.asset_resource import Feature2D, Justify2D, AssetResource, Feature2DOverride
+from written_book.asset_resource import (
+    AssetResource,
+    Feature2D,
+    Feature2DOverride,
+    Justify2D,
+)
 
 verbose = {
     "top left": (Justify2D.X.LEFT, Justify2D.Y.TOP),
@@ -12,18 +17,20 @@ verbose = {
     "center right": (Justify2D.X.RIGHT, Justify2D.Y.CENTER),
     "bottom left": (Justify2D.X.LEFT, Justify2D.Y.BOTTOM),
     "bottom center": (Justify2D.X.CENTER, Justify2D.Y.BOTTOM),
-    "bottom right": (Justify2D.X.RIGHT, Justify2D.Y.BOTTOM)
+    "bottom right": (Justify2D.X.RIGHT, Justify2D.Y.BOTTOM),
 }
 one_word = {
     "center": (Justify2D.X.CENTER, Justify2D.Y.CENTER),
     "left": (Justify2D.X.LEFT, Justify2D.Y.CENTER),
     "right": (Justify2D.X.RIGHT, Justify2D.Y.CENTER),
     "top": (Justify2D.X.CENTER, Justify2D.Y.TOP),
-    "bottom": (Justify2D.X.CENTER, Justify2D.Y.BOTTOM)
+    "bottom": (Justify2D.X.CENTER, Justify2D.Y.BOTTOM),
 }
 all_anchors = {**verbose, **one_word}
 dummy_image_16 = AssetResource.from_image(Image.new("RGBA", (16, 16), (255, 0, 0, 255)))
-dummy_image_16_2 = AssetResource.from_image(Image.new("RGBA", (16, 16), (255, 255, 0, 255)))
+dummy_image_16_2 = AssetResource.from_image(
+    Image.new("RGBA", (16, 16), (255, 255, 0, 255))
+)
 dummy_image_32 = AssetResource.from_image(Image.new("RGBA", (32, 32), (0, 255, 0, 255)))
 dummy_image_24 = AssetResource.from_image(Image.new("RGBA", (24, 24), (0, 0, 255, 255)))
 override_16 = Feature2DOverride(dummy_image_16_2, 0, 0)

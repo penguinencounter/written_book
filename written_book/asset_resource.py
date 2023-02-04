@@ -124,20 +124,12 @@ class Justify2D:
         "left": ("center", "left"),
         "right": ("center", "right"),
         "top": ("top", "center"),
-        "bottom": ("bottom", "center")
+        "bottom": ("bottom", "center"),
     }
 
-    x_word = {
-        "left": X.LEFT,
-        "center": X.CENTER,
-        "right": X.RIGHT
-    }
+    x_word = {"left": X.LEFT, "center": X.CENTER, "right": X.RIGHT}
 
-    y_word = {
-        "top": Y.TOP,
-        "center": Y.CENTER,
-        "bottom": Y.BOTTOM
-    }
+    y_word = {"top": Y.TOP, "center": Y.CENTER, "bottom": Y.BOTTOM}
 
 
 class Justify1D(enum.Enum):
@@ -146,7 +138,7 @@ class Justify1D(enum.Enum):
     END = "end"
 
     @classmethod
-    def from_name(cls, name: str) -> 'Justify1D':
+    def from_name(cls, name: str) -> "Justify1D":
         return {
             "start": cls.START,
             "center": cls.CENTER,
@@ -154,7 +146,7 @@ class Justify1D(enum.Enum):
             "left": cls.START,
             "right": cls.END,
             "top": cls.START,
-            "bottom": cls.END
+            "bottom": cls.END,
         }[name.lower()]
 
 
@@ -174,32 +166,44 @@ class Feature2D(Feature):
         :param code: string like "top left" or similar
         :return: (x justify, y justify)
         """
-        words = re.findall(r'(?:^|(?<=[^A-Za-z0-9]))(\w+)(?=[^A-Za-z0-9]|$)', code.lower())
+        words = re.findall(
+            r"(?:^|(?<=[^A-Za-z0-9]))(\w+)(?=[^A-Za-z0-9]|$)", code.lower()
+        )
         if 1 < len(words) > 2:
-            raise ValueError(f"Invalid justify code: {code}; must be 1 or 2 words, got {len(words)}")
+            raise ValueError(
+                f"Invalid justify code: {code}; must be 1 or 2 words, got {len(words)}"
+            )
         if len(words) == 1:
             if words[0] in Justify2D.one_word_aliases:
                 words = Justify2D.one_word_aliases[words[0]]
             else:
-                raise ValueError(f"Invalid justify code: {code}; the 1-word code '{words[0]}' is not supported")
+                raise ValueError(
+                    f"Invalid justify code: {code}; the 1-word code '{words[0]}' is not supported"
+                )
         justify = Justify2D.x_word[words[1]], Justify2D.y_word[words[0]]
         return justify
 
-    def __init__(self,
-                 asset: AssetResource,
-                 justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
-                 overrides: typing.List[Feature2DOverride] = None):
+    def __init__(
+        self,
+        asset: AssetResource,
+        justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
+        overrides: typing.List[Feature2DOverride] = None,
+    ):
         super().__init__(asset)
         if isinstance(justify, str):
             justify = self.get_justify(justify)
         self.justifyX, self.justifyY = justify
-        self.overrides: typing.Dict[typing.Tuple[int, int], Feature2DOverride] = {(o.x, o.y): o for o in (overrides or [])}
+        self.overrides: typing.Dict[typing.Tuple[int, int], Feature2DOverride] = {
+            (o.x, o.y): o for o in (overrides or [])
+        }
         for override in self.overrides.values():
             if override.asset.get().size != self._asset.get().size:
-                raise ValueError("Override asset size must match the base asset size.\n    "
-                                 f"got {override.asset.get().size}, expected {self._asset.get().size}\n    "
-                                 "(hint: try resizing the override with the 'crop' option)\n    "
-                                 "(hint: if you don't want to do that, use an overlay instead)")
+                raise ValueError(
+                    "Override asset size must match the base asset size.\n    "
+                    f"got {override.asset.get().size}, expected {self._asset.get().size}\n    "
+                    "(hint: try resizing the override with the 'crop' option)\n    "
+                    "(hint: if you don't want to do that, use an overlay instead)"
+                )
             override.asset.destroy()  # We don't need the image right now
 
     @property
@@ -215,8 +219,13 @@ class Feature2D(Feature):
         """
         img = self._asset.get()
         # Round up to the next multiple of the asset size...
-        tiled = Image.new("RGBA",
-                          (odd(next_multiple(width, img.width)), odd(next_multiple(height, img.height))))
+        tiled = Image.new(
+            "RGBA",
+            (
+                odd(next_multiple(width, img.width)),
+                odd(next_multiple(height, img.height)),
+            ),
+        )
         tile_count = tiled.width // img.width, tiled.height // img.height
         # Calculate the "origin" tile
         center_pos = [0, 0]
@@ -251,14 +260,14 @@ class Feature1D(Feature):
         """
         return Justify1D.from_name(code)
 
-    def __init__(self,
-                 asset: AssetResource,
-                 justify: typing.Union[str, Justify1D] = "center"):
+    def __init__(
+        self, asset: AssetResource, justify: typing.Union[str, Justify1D] = "center"
+    ):
         super().__init__(asset)
         if isinstance(justify, str):
             justify = Justify1D.from_name(justify)
         self.justify = justify
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
