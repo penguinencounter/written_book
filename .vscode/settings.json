@@ -18,5 +18,13 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
     }
-  }
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/book/*/theme.json"
+      ],
+      "url": "./written_book/theme-schema.json"
+    }
+  ]
 }
