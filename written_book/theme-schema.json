@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Schema for theme files",
+  "description": "Schema for theme files",
+  "type": "object",
+  "properties": {
+    "features": {
+      "description": "Features of the theme (sources for assets and cropboxes)",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "description": "The source image of the feature",
+            "type": "string"
+          },
+          "crop": {
+            "description": "The cropping box of the feature",
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        },
+        "oneOf": [
+          {
+            "properties": {
+              "feature": {
+                "description": "The feature that is being described",
+                "type": "string",
+                "enum": [
+                  "top_left_corner",
+                  "top_right_corner",
+                  "bottom_left_corner",
+                  "bottom_right_corner"
+                ]
+              }
+            }
+          },
+          {
+            "properties": {
+              "feature": {
+                "description": "The feature that is being described",
+                "type": "string",
+                "enum": [
+                  "top_edge",
+                  "bottom_edge",
+                  "left_edge",
+                  "right_edge"
+                ]
+              }
+            },
+            "justify": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "top",
+                "bottom",
+                "left",
+                "right"
+              ],
+              "default": "start"
+            }
+          },
+          {
+            "properties": {
+              "feature": {
+                "description": "The feature that is being described",
+                "type": "string",
+                "enum": [
+                  "background"
+                ]
+              },
+              "justify": {
+                "type": "string",
+                "enum": [
+                  "top left",
+                  "top right",
+                  "bottom left",
+                  "bottom right",
+                  "center left",
+                  "center right",
+                  "top center",
+                  "bottom center",
+                  "center center",
+                  "center",
+                  "left",
+                  "right",
+                  "top",
+                  "bottom"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "required": [
+        "feature",
+        "source"
+      ]
+    }
+  },
+  "overrides": {
+    "description": "Overrides of the theme, for example changing one instance in a tiling",
+    "type": "array",
+    "items": {
+      "type": "object"
+    }
+  },
+  "overlays": {
+    "description": "Overlays that are composited atop the rendered background",
+    "type": "array",
+    "items": {
+      "type": "object"
+    }
+  },
+  "colors": {
+    "description": "Colors that are used in the theme",
+    "type": "object"
+  }
+}

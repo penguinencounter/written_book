@@ -1,0 +1,19 @@
+{
+  "features": [
+    {
+      "feature": "background",
+      "source": "pack.png",
+      "crop": [0, 0, 16, 16],
+      "justify": "top left"
+    }
+  ],
+  "overrides": [
+
+  ],
+  "overlays": [
+
+  ],
+  "colors": {
+
+  }
+}
