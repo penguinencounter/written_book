@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "features": {
-      "description": "Features of the theme (sources for assets and cropboxes)",
+      "description": "Features of the theme (textures)",
       "type": "array",
       "items": {
         "allOf": [
@@ -23,7 +23,7 @@
       ]
     },
     "overrides": {
-      "description": "Overrides of the theme, for example changing one instance in a tiling",
+      "description": "Overrides of the theme. For example, changing one tile in the background",
       "type": "array",
       "items": {
         "allOf": [
