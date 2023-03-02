@@ -43,10 +43,10 @@ class AssetResource:
     """
 
     def __init__(
-            self,
-            source: str,
-            crop: typing.Optional[typing.Tuple[int, int, int, int]] = None,
-            source_image: typing.Optional[Image.Image] = None,
+        self,
+        source: str,
+        crop: typing.Optional[typing.Tuple[int, int, int, int]] = None,
+        source_image: typing.Optional[Image.Image] = None,
     ):
         self.source_path = _normalize(source)
         self._static = False
@@ -233,10 +233,10 @@ class Feature2D(Feature):
         return justify
 
     def __init__(
-            self,
-            asset: AssetResource,
-            justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
-            overrides: typing.Optional[typing.List[Feature2DOverride]] = None,
+        self,
+        asset: AssetResource,
+        justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
+        overrides: typing.Optional[typing.List[Feature2DOverride]] = None,
     ):
         super().__init__(asset)
         if isinstance(justify, str):
@@ -329,11 +329,11 @@ class Feature1D(Feature):
         return Justify1D.from_name(code)
 
     def __init__(
-            self,
-            asset: AssetResource,
-            justify: typing.Union[str, Justify1D] = "center",
-            direction: Direction = Direction.HORIZONTAL,
-            overrides: typing.Optional[typing.List[Feature1DOverride]] = None,
+        self,
+        asset: AssetResource,
+        justify: typing.Union[str, Justify1D] = "center",
+        direction: Direction = Direction.HORIZONTAL,
+        overrides: typing.Optional[typing.List[Feature1DOverride]] = None,
     ):
         super().__init__(asset)
         if isinstance(justify, str):
