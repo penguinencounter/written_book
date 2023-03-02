@@ -8,93 +8,12 @@
       "description": "Features of the theme (sources for assets and cropboxes)",
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "source": {
-            "description": "The source image of the feature",
-            "type": "string"
-          },
-          "crop": {
-            "description": "The cropping box of the feature",
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 4,
-            "maxItems": 4
-          }
-        },
-        "oneOf": [
+        "allOf": [
           {
-            "properties": {
-              "feature": {
-                "description": "The feature that is being described",
-                "type": "string",
-                "enum": [
-                  "top_left_corner",
-                  "top_right_corner",
-                  "bottom_left_corner",
-                  "bottom_right_corner"
-                ]
-              }
-            }
+            "$ref": "#/definitions/sourced"
           },
           {
-            "properties": {
-              "feature": {
-                "description": "The feature that is being described",
-                "type": "string",
-                "enum": [
-                  "top_edge",
-                  "bottom_edge",
-                  "left_edge",
-                  "right_edge"
-                ]
-              }
-            },
-            "justify": {
-              "type": "string",
-              "enum": [
-                "start",
-                "center",
-                "end",
-                "top",
-                "bottom",
-                "left",
-                "right"
-              ],
-              "default": "start"
-            }
-          },
-          {
-            "properties": {
-              "feature": {
-                "description": "The feature that is being described",
-                "type": "string",
-                "enum": [
-                  "background"
-                ]
-              },
-              "justify": {
-                "type": "string",
-                "enum": [
-                  "top left",
-                  "top right",
-                  "bottom left",
-                  "bottom right",
-                  "center left",
-                  "center right",
-                  "top center",
-                  "bottom center",
-                  "center center",
-                  "center",
-                  "left",
-                  "right",
-                  "top",
-                  "bottom"
-                ]
-              }
-            }
+            "$ref": "#/definitions/feature_justify"
           }
         ]
       },
@@ -102,24 +21,218 @@
         "feature",
         "source"
       ]
-    }
-  },
-  "overrides": {
-    "description": "Overrides of the theme, for example changing one instance in a tiling",
-    "type": "array",
-    "items": {
+    },
+    "overrides": {
+      "description": "Overrides of the theme, for example changing one instance in a tiling",
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/sourced"
+          },
+          {
+            "$ref": "#/definitions/feature_override"
+          }
+        ]
+      }
+    },
+    "overlays": {
+      "description": "Overlays that are composited atop the rendered background",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/overlay"
+      }
+    },
+    "colors": {
+      "description": "Colors that are used in the theme",
       "type": "object"
     }
   },
-  "overlays": {
-    "description": "Overlays that are composited atop the rendered background",
-    "type": "array",
-    "items": {
-      "type": "object"
+  "definitions": {
+    "sourced": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "description": "Texture source for this feature, override, or overlay",
+          "type": "string"
+        },
+        "crop": {
+          "description": "Source cropping box, usually used with sprite-sheets.",
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "source"
+      ]
+    },
+    "feature_justify": {
+      "oneOf": [
+        {
+          "properties": {
+            "feature": {
+              "description": "The feature that is being described",
+              "type": "string",
+              "enum": [
+                "top_left_corner",
+                "top_right_corner",
+                "bottom_left_corner",
+                "bottom_right_corner"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "feature": {
+              "description": "The feature that is being described",
+              "type": "string",
+              "enum": [
+                "top_edge",
+                "bottom_edge",
+                "left_edge",
+                "right_edge"
+              ]
+            }
+          },
+          "justify": {
+            "$ref": "#/definitions/1d_justify"
+          }
+        },
+        {
+          "properties": {
+            "feature": {
+              "description": "The feature that is being described",
+              "type": "string",
+              "enum": [
+                "background"
+              ]
+            },
+            "justify": {
+              "$ref": "#/definitions/2d_justify"
+            }
+          }
+        }
+      ],
+      "required": ["feature"]
+    },
+    "feature_override": {
+      "oneOf": [
+        {
+          "properties": {
+            "feature": {
+              "description": "The feature that is being described",
+              "type": "string",
+              "enum": [
+                "top_left_corner",
+                "top_right_corner",
+                "bottom_left_corner",
+                "bottom_right_corner"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "feature": {
+              "description": "The feature that is being described",
+              "type": "string",
+              "enum": [
+                "top_edge",
+                "bottom_edge",
+                "left_edge",
+                "right_edge"
+              ]
+            }
+          },
+          "index": {
+            "type": "number"
+          }
+        },
+        {
+          "properties": {
+            "feature": {
+              "description": "The feature that is being described",
+              "type": "string",
+              "enum": [
+                "background"
+              ]
+            },
+            "index": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "required": ["feature"]
+    },
+    "2d_justify": {
+      "type": "string",
+      "enum": [
+        "top left",
+        "top right",
+        "bottom left",
+        "bottom right",
+        "center left",
+        "center right",
+        "top center",
+        "bottom center",
+        "center center",
+        "center",
+        "left",
+        "right",
+        "top",
+        "bottom"
+      ],
+      "default": "top left"
+    },
+    "1d_justify": {
+      "type": "string",
+      "enum": [
+        "start",
+        "center",
+        "end",
+        "top",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "default": "start"
+    },
+    "overlay": {
+      "type": "object",
+      "properties": {
+        "anchor": {
+          "$ref": "#/definitions/2d_justify"
+        },
+        "mode": {
+          "description": "How the overlay is aligned with the rest of the elements of the page.",
+          "type": "string",
+          "enum": [
+            "inside",
+            "border-center",
+            "border-edge"
+          ],
+          "default": "inside"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/sourced"
+        }
+      ],
+      "required": [
+        "anchor"
+      ]
     }
-  },
-  "colors": {
-    "description": "Colors that are used in the theme",
-    "type": "object"
   }
 }

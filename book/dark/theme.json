@@ -2,18 +2,24 @@
   "features": [
     {
       "feature": "background",
-      "source": "pack.png",
-      "crop": [0, 0, 16, 16],
-      "justify": "top left"
+      "source": "bg.png",
+      "justify": "center center"
     }
   ],
   "overrides": [
-
+    {
+      "index": [0, 0],
+      "source": "bg_center.png",
+      "feature": "background"
+    }
   ],
   "overlays": [
-
+    {
+      "source": "bottom_right_overlay.png",
+      "anchor": "bottom right",
+      "mode": "inside"
+    }
   ],
   "colors": {
-
   }
 }
