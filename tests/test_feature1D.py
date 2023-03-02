@@ -3,7 +3,7 @@ import random
 import pytest
 from PIL import Image
 
-from written_book.asset_resource import AssetResource, Feature1D, Justify1D, Direction
+from written_book.asset_resource import AssetResource, Direction, Feature1D, Justify1D
 
 all_anchors = {
     "start": Justify1D.START,

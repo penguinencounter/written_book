@@ -43,10 +43,10 @@ class AssetResource:
     """
 
     def __init__(
-        self,
-        source: str,
-        crop: typing.Optional[typing.Tuple[int, int, int, int]] = None,
-        source_image: typing.Optional[Image.Image] = None,
+            self,
+            source: str,
+            crop: typing.Optional[typing.Tuple[int, int, int, int]] = None,
+            source_image: typing.Optional[Image.Image] = None,
     ):
         self.source_path = _normalize(source)
         self._static = False
@@ -127,6 +127,44 @@ class Justify2D:
     y_word = {"top": Y.TOP, "center": Y.CENTER, "bottom": Y.BOTTOM}
 
 
+class Anchor2D:
+    @enum.unique
+    class AnchorMode(enum.Enum):
+        INSIDE = "inside"
+        OUTSIDE = "outside"
+        EDGE = "edge"
+
+    @enum.unique
+    class X(enum.Enum):
+        LEFT = "left", None
+        CENTER = "center", None
+        RIGHT = "right", None
+        INSIDE_LEFT = "inside-left", ("outside",)
+        INSIDE_RIGHT = "inside-right", ("outside",)
+
+        def __repr__(self):
+            return f"{self.value[0]}"
+
+        @staticmethod
+        def valid(x_anchor: "Anchor2D.X", anchor: "Anchor2D.AnchorMode") -> bool:
+            return x_anchor.value[1] is None or anchor.value in x_anchor.value[1]
+
+    @enum.unique
+    class Y(enum.Enum):
+        TOP = "top", None
+        CENTER = "center", None
+        BOTTOM = "bottom", None
+        INSIDE_TOP = "inside-top", ("outside",)
+        INSIDE_BOTTOM = "inside-bottom", ("outside",)
+
+        def __repr__(self):
+            return f"{self.value[0]}"
+
+        @staticmethod
+        def valid(y_anchor: "Anchor2D.Y", anchor: "Anchor2D.AnchorMode") -> bool:
+            return y_anchor.value[1] is None or anchor.value in y_anchor.value[1]
+
+
 @enum.unique
 class Justify1D(enum.Enum):
     START = "start"
@@ -195,10 +233,10 @@ class Feature2D(Feature):
         return justify
 
     def __init__(
-        self,
-        asset: AssetResource,
-        justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
-        overrides: typing.Optional[typing.List[Feature2DOverride]] = None,
+            self,
+            asset: AssetResource,
+            justify: typing.Union[str, typing.Tuple[Justify2D.X, Justify2D.Y]] = "center",
+            overrides: typing.Optional[typing.List[Feature2DOverride]] = None,
     ):
         super().__init__(asset)
         if isinstance(justify, str):
@@ -291,11 +329,11 @@ class Feature1D(Feature):
         return Justify1D.from_name(code)
 
     def __init__(
-        self,
-        asset: AssetResource,
-        justify: typing.Union[str, Justify1D] = "center",
-        direction: Direction = Direction.HORIZONTAL,
-        overrides: typing.Optional[typing.List[Feature1DOverride]] = None,
+            self,
+            asset: AssetResource,
+            justify: typing.Union[str, Justify1D] = "center",
+            direction: Direction = Direction.HORIZONTAL,
+            overrides: typing.Optional[typing.List[Feature1DOverride]] = None,
     ):
         super().__init__(asset)
         if isinstance(justify, str):

@@ -208,19 +208,42 @@
       ],
       "default": "start"
     },
+    "2d_anchor_addons": {
+      "enum": [
+        "inside-top left",
+        "inside-top center",
+        "inside-top right",
+        "inside-bottom left",
+        "inside-bottom center",
+        "inside-bottom right",
+        "top inside-left",
+        "center inside-left",
+        "right inside-left",
+        "top inside-right",
+        "center inside-right",
+        "right inside-right"
+      ]
+    },
     "overlay": {
       "type": "object",
       "properties": {
         "anchor": {
-          "$ref": "#/definitions/2d_justify"
+          "anyOf": [
+            {
+              "$ref": "#/definitions/2d_justify"
+            },
+            {
+              "$ref": "#/definitions/2d_anchor_addons"
+            }
+          ]
         },
         "mode": {
           "description": "How the overlay is aligned with the rest of the elements of the page.",
           "type": "string",
           "enum": [
             "inside",
-            "border-center",
-            "border-edge"
+            "outside",
+            "edge"
           ],
           "default": "inside"
         }
