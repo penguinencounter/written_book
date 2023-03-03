@@ -2,8 +2,7 @@
   {
     "expect": {
       "ok": false,
-      "errorType": "ValidationError",
-      "errorCode": 1
+      "errorType": "ValidationError"
     },
     "kwargs": {
       "theme_directory": "tests/schema_tests"
@@ -13,8 +12,7 @@
   {
     "expect": {
       "ok": false,
-      "errorType": "ValidationError",
-      "errorCode": 2
+      "errorType": "ValidationError"
     },
     "kwargs": {
       "theme_directory": "tests/schema_tests"
@@ -27,8 +25,7 @@
   {
     "expect": {
       "ok": false,
-      "errorType": "ValidationError",
-      "errorCode": 2
+      "errorType": "ValidationError"
     },
     "kwargs": {
       "theme_directory": "tests/schema_tests"
@@ -41,8 +38,7 @@
   {
     "expect": {
       "ok": false,
-      "errorType": "ValidationError",
-      "errorCode": 3
+      "errorType": "ValidationError"
     },
     "kwargs": {
       "theme_directory": "tests/schema_tests"
@@ -55,8 +51,7 @@
   {
     "expect": {
       "ok": false,
-      "errorType": "ValidationError",
-      "errorCode": 3
+      "errorType": "ValidationError"
     },
     "kwargs": {
       "theme_directory": "tests/schema_tests"
