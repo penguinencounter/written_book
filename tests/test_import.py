@@ -35,7 +35,11 @@ def compile_test_targets() -> Dict[str, List[JsonTestCase]]:
             jtests = load(f)
             for test in jtests:
                 tc = JsonTestCase(**test)
-                compiled[os.path.relpath(path, SCHEMA_TEST_DIR).replace("\\", "/")].append(tc)  # always forward slashes
+                compiled[
+                    os.path.relpath(path, SCHEMA_TEST_DIR).replace("\\", "/")
+                ].append(
+                    tc
+                )  # always forward slashes
     return compiled
 
 
