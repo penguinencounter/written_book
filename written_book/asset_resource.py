@@ -88,7 +88,9 @@ class AssetResource:
         return self.source.crop(self.crop)
 
     @classmethod
-    def import_(cls, json_body: JSON, theme_directory: typing.Optional[str] = None) -> "AssetResource":
+    def import_(
+        cls, json_body: JSON, theme_directory: typing.Optional[str] = None
+    ) -> "AssetResource":
         """
         Import an AssetResource from JSON.
         This is the code side of #/definitions/sourced in the theme schema.
@@ -101,18 +103,27 @@ class AssetResource:
             theme_directory or os.getcwd()
         )  # ideally don't support this later
         if not isinstance(json_body, dict):
-            raise ValidationError(f"JSON body for AssetResource should be a dict, not {type(json_body)}", 2)
+            raise ValidationError(
+                f"JSON body for AssetResource should be a dict, not {type(json_body)}",
+                2,
+            )
         # required: source
         if "source" not in json_body:
             raise ValidationError('AssetResource(s) require a "source".', 1)
         source = json_body["source"]  # relative to theme file
         if not isinstance(source, str):
-            raise ValidationError(f"JSON body for AssetResource source should be a string, not {type(source)}", 2)
+            raise ValidationError(
+                f"JSON body for AssetResource source should be a string, not {type(source)}",
+                2,
+            )
         # IF there is a crop, it must be exactly four integers.
         if "crop" in json_body:
             crop = json_body["crop"]
             if not isinstance(crop, list):
-                raise ValidationError(f"JSON body for AssetResource crop should be a list, not {type(crop)}", 2)
+                raise ValidationError(
+                    f"JSON body for AssetResource crop should be a list, not {type(crop)}",
+                    2,
+                )
             if len(crop) != 4:
                 raise ValidationError(
                     f'"crop" must be exactly 4 integers or omitted, got {len(crop)} instead',
@@ -121,7 +132,9 @@ class AssetResource:
             intermediate: typing.List[int] = []
             for crop_att in crop:
                 try:
-                    assert (isinstance(crop_att, float) and crop_att.is_integer()) or isinstance(crop_att, int)
+                    assert (
+                        isinstance(crop_att, float) and crop_att.is_integer()
+                    ) or isinstance(crop_att, int)
                     assert int(crop_att) >= 0
                     intermediate.append(int(crop_att))
                 except (ValueError, AssertionError):
@@ -129,7 +142,9 @@ class AssetResource:
                         f"The cropping value {crop_att} must be an integer that is at least 0.",
                         2,
                     )
-            new_crop: typing.Optional[typing.Tuple[int, int, int, int]] = tuple(intermediate)
+            new_crop: typing.Optional[typing.Tuple[int, int, int, int]] = tuple(
+                intermediate
+            )
         else:
             new_crop = None
         # try to resolve the source path on the theme path if it's not absolute
