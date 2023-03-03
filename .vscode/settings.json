@@ -26,5 +26,6 @@
       ],
       "url": "./written_book/theme-schema.json"
     }
-  ]
+  ],
+  "python.analysis.typeCheckingMode": "basic"
 }
