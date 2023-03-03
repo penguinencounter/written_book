@@ -15,9 +15,9 @@
   ],
   "overlays": [
     {
-      "source": "scroll-top-right.png",
-      "anchor": "inside-top right",
-      "mode": "outside"
+      "mode": "inside",
+      "anchor": "top right",
+      "source": "scroll-top-right.png"
     }
   ],
   "colors": {

@@ -3,6 +3,7 @@ import os.path
 import re
 import typing
 
+from exceptions import ValidationError
 from PIL import Image
 
 
@@ -84,6 +85,49 @@ class AssetResource:
         return self.source.crop(self.crop)
 
     @classmethod
+    def import_(cls, json_body: dict, theme_directory: str = None) -> "AssetResource":
+        """
+        Import an AssetResource from JSON.
+        This is the code side of #/definitions/sourced in the theme schema.
+        Specification should be managed in the schema, then ported to here.
+        :param json_body: JSON python representation, by json.load[s].
+        :param theme_directory: Path of the theme file or None for the cwd
+        :return: ...new
+        """
+        theme_directory = (
+            theme_directory or os.getcwd()
+        )  # ideally don't support this later
+        # required: source
+        if "source" not in json_body:
+            raise ValidationError('AssetResource(s) require a "source".', 1)
+        source = json_body["source"]  # relative to theme file
+        # IF there is a crop, it must be exactly four integers.
+        if "crop" in json_body:
+            crop = json_body["crop"]
+            if len(crop) != 4:
+                raise ValidationError(
+                    f'"crop" must be exactly 4 integers or omitted, got {len(crop)} instead',
+                    2,
+                )
+            for crop_att in crop:
+                try:
+                    assert int(crop_att) >= 0
+                except (ValueError, AssertionError):
+                    raise ValidationError(
+                        f"The cropping value {crop_att} must be an integer that is at least 0.",
+                        3,
+                    )
+            crop = list(map(int, crop))
+        else:
+            crop = None
+        # try to resolve the source path on the theme path if it's not absolute
+        if not os.path.isabs(source):
+            source = os.path.join(theme_directory, source)
+        # ensure it's absolute and all that
+        source = _normalize(source)
+        return cls(source, crop)
+
+    @classmethod
     def from_image(cls, image: Image.Image):
         i = cls("", None, image)
         i._static = True
@@ -163,6 +207,20 @@ class Anchor2D:
         @staticmethod
         def valid(y_anchor: "Anchor2D.Y", anchor: "Anchor2D.AnchorMode") -> bool:
             return y_anchor.value[1] is None or anchor.value in y_anchor.value[1]
+
+    @staticmethod
+    def valid(
+        x_anchor: typing.Union[X, str],
+        y_anchor: typing.Union[Y, str],
+        anchor: typing.Union[AnchorMode, str],
+    ) -> bool:
+        if isinstance(x_anchor, str):
+            x_anchor = Anchor2D.X(x_anchor.upper())
+        if isinstance(y_anchor, str):
+            y_anchor = Anchor2D.Y(y_anchor.upper())
+        if isinstance(anchor, str):
+            anchor = Anchor2D.AnchorMode(anchor.upper())
+        return Anchor2D.X.valid(x_anchor, anchor) and Anchor2D.Y.valid(y_anchor, anchor)
 
 
 @enum.unique

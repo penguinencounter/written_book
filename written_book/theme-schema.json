@@ -60,10 +60,11 @@
           "description": "Source cropping box, usually used with sprite-sheets.",
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           },
           "minItems": 4,
-          "maxItems": 4
+          "maxItems": 4,
+          "minimum": 0
         }
       },
       "required": [
@@ -227,34 +228,68 @@
     "overlay": {
       "type": "object",
       "properties": {
-        "anchor": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/2d_justify"
-            },
-            {
-              "$ref": "#/definitions/2d_anchor_addons"
-            }
-          ]
-        },
         "mode": {
           "description": "How the overlay is aligned with the rest of the elements of the page.",
           "type": "string",
-          "enum": [
-            "inside",
-            "outside",
-            "edge"
-          ],
           "default": "inside"
         }
       },
       "allOf": [
         {
           "$ref": "#/definitions/sourced"
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "mode": {
+                  "const": "outside"
+                },
+                "anchor": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/2d_justify"
+                    },
+                    {
+                      "$ref": "#/definitions/2d_anchor_addons"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "mode": {
+                  "const": "edge"
+                },
+                "anchor": {
+                  "$ref": "#/definitions/2d_justify"
+                }
+              },
+              "required": [
+                "anchor"
+              ]
+            },
+            {
+              "properties": {
+                "mode": {
+                  "const": "inside"
+                },
+                "anchor": {
+                  "$ref": "#/definitions/2d_justify"
+                },
+                "above": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          ]
         }
       ],
       "required": [
-        "anchor"
+        "anchor",
+        "mode"
       ]
     }
   }
