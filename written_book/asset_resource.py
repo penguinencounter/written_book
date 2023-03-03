@@ -3,8 +3,9 @@ import os.path
 import re
 import typing
 
-from exceptions import ValidationError
 from PIL import Image
+
+from .exceptions import ValidationError
 
 
 def _normalize(path: str) -> str:
