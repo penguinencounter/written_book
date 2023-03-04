@@ -82,7 +82,16 @@
                 "top_left_corner",
                 "top_right_corner",
                 "bottom_left_corner",
-                "bottom_right_corner"
+                "bottom_right_corner",
+                "block_quote_top_cap",
+                "block_quote_bottom_cap",
+                "code_top_left_corner",
+                "code_top_right_corner",
+                "code_bottom_left_corner",
+                "code_bottom_right_corner",
+                "horizontal_rule_left_cap",
+                "horizontal_rule_right_cap",
+                "bullet"
               ]
             }
           }
@@ -96,7 +105,13 @@
                 "top_edge",
                 "bottom_edge",
                 "left_edge",
-                "right_edge"
+                "right_edge",
+                "block_quote",
+                "code_top_edge",
+                "code_bottom_edge",
+                "code_left_edge",
+                "code_right_edge",
+                "horizontal_rule"
               ]
             }
           },
@@ -110,7 +125,8 @@
               "description": "The feature that is being described",
               "type": "string",
               "enum": [
-                "background"
+                "background",
+                "code_background"
               ]
             },
             "justify": {
