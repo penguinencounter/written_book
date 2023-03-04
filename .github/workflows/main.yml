@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python 3.10
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - name: Install Poetry
@@ -27,7 +27,7 @@ jobs:
         run: npm install
       - name: Setup cache
         id: cached-poetry-dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
