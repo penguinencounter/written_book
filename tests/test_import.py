@@ -6,7 +6,7 @@ from typing import Dict, List, NamedTuple
 
 import pytest
 
-from written_book.asset_resource import AssetResource
+from written_book.asset_resource import AssetResource, Feature
 from written_book.types import JSONObject
 
 
@@ -51,23 +51,37 @@ def compile_test_targets() -> Dict[str, List[JsonTestCase]]:
 compiled_tests = compile_test_targets()
 
 
-@pytest.mark.parametrize("test_data", compiled_tests["asset_resource.json"])
-def test_import_asset_resource(test_data: JsonTestCase):
-    print(f"\ntest_import_asset_resource details:")
-    if not test_data.expect.ok:
-        print(f"  [{test_data.expect.errorType} expected]")
+def dump_test_case(jtc: JsonTestCase):
+    print(f"\nTest case details:")
+    if not jtc.expect.ok:
+        print(f"  [{jtc.expect.errorType} expected]")
     print(f"  Test input:")
-    test_str = pprint.pformat(test_data.test, indent=1)
+    test_str = pprint.pformat(jtc.test, indent=1)
     # indent everything
     for line in test_str.splitlines():
         print(f"    {line}")
     print(f"  Test args:")
-    for key, val in test_data.kwargs.items():
+    for key, val in jtc.kwargs.items():
         print(f"    {key} = {pprint.pformat(val, indent=1, compact=True)}")
-    if test_data.expect.ok:
-        AssetResource.import_(test_data.test)
+
+
+def run_test(jtc: JsonTestCase, target_func: callable):
+    if jtc.expect.ok:
+        target_func(jtc.test, **jtc.kwargs)
     else:
         with pytest.raises(Exception) as e:
-            AssetResource.import_(test_data.test)
-        assert test_data.expect.errorType in e.value.__class__.__name__
-        print(" (passed):\n", e.value)
+            target_func(jtc.test, **jtc.kwargs)
+        print(" (error message):\n", e.value)
+        assert jtc.expect.errorType in e.value.__class__.__name__
+
+
+@pytest.mark.parametrize("test_data", compiled_tests["asset_resource.json"])
+def test_import_asset_resource(test_data: JsonTestCase):
+    dump_test_case(test_data)
+    run_test(test_data, AssetResource.import_)
+
+
+@pytest.mark.parametrize("test_data", compiled_tests["feature.json"])
+def test_import_feature(test_data: JsonTestCase):
+    dump_test_case(test_data)
+    run_test(test_data, Feature.import_)

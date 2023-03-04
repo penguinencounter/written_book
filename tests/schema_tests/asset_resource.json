@@ -106,5 +106,53 @@
       "source": "fakesrc",
       "crop": [0.5, 0, 0, 0]
     }
+  },
+  {
+    "expect": {
+      "ok": false,
+      "errorType": "FileNotFoundError"
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": {
+      "source": "fakesrc"
+    }
+  },
+  {
+    "expect": {
+      "ok": false,
+      "errorType": "FileNotFoundError"
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": {
+      "source": "fakesrc",
+      "crop": [0, 0, 0, 0]
+    }
+  },
+  {
+    "expect": {
+      "ok": true
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": {
+      "source": "example.png",
+      "crop": [0, 0, 0, 0]
+    }
+  },
+  {
+    "expect": {
+      "ok": true
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": {
+      "source": "example.png"
+    }
   }
 ]

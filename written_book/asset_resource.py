@@ -77,7 +77,7 @@ class AssetResource:
         else:
             source: Image.Image = Image.open(self.source_path).convert("RGBA")
             source.load()
-            shared_asset_cache[self.source_path] = self.source
+            shared_asset_cache[self.source_path] = source
             return source
 
     def get(self) -> Image.Image:
@@ -166,8 +166,59 @@ class AssetResource:
 
 
 class Feature:
+    FEATURE_TYPES = [
+        "top_left_corner",
+        "top_right_corner",
+        "bottom_left_corner",
+        "bottom_right_corner",
+        "block_quote_top_cap",
+        "block_quote_bottom_cap",
+        "code_top_left_corner",
+        "code_top_right_corner",
+        "code_bottom_left_corner",
+        "code_bottom_right_corner",
+        "horizontal_rule_left_cap",
+        "horizontal_rule_right_cap",
+        "bullet",
+    ]
+
     def __init__(self, asset: AssetResource):
         self._asset = asset
+
+    @classmethod
+    def import_(cls, json_body: JSON, theme_directory: typing.Optional[str] = None):
+        if not isinstance(json_body, dict):
+            raise ValidationError(
+                f"JSON body for Feature should be a dict, not {json_body.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        asset = AssetResource.import_(json_body, theme_directory)
+        if "feature" not in json_body:
+            raise ValidationError(
+                'Feature(s) require a "feature".',
+                ValidationError.ErrorCode.MISSING_VALUE,
+            )
+        feature = json_body["feature"]
+        if not isinstance(feature, str):
+            raise ValidationError(
+                f"JSON body for Feature feature should be a string, not {feature.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+
+        if feature not in cls.FEATURE_TYPES:
+            msg = (
+                f'JSON body for Feature feature should be a valid 0-dimensional feature, not "{feature}".\n'
+                f"Valid features are:\n"
+            )
+            for feature_type in cls.FEATURE_TYPES:
+                msg += f"  {feature_type}\n"
+            msg = msg[:-1]
+            raise ValidationError(
+                msg,
+                ValidationError.ErrorCode.INVALID_VALUE,
+            )
+
+        return cls(asset)
 
 
 class Justify2D:
