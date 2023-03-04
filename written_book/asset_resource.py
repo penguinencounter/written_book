@@ -104,30 +104,33 @@ class AssetResource:
         )  # ideally don't support this later
         if not isinstance(json_body, dict):
             raise ValidationError(
-                f"JSON body for AssetResource should be a dict, not {type(json_body)}",
-                2,
+                f"JSON body for AssetResource should be a dict, not {json_body.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
             )
         # required: source
         if "source" not in json_body:
-            raise ValidationError('AssetResource(s) require a "source".', 1)
+            raise ValidationError(
+                'AssetResource(s) require a "source".',
+                ValidationError.ErrorCode.MISSING_VALUE,
+            )
         source = json_body["source"]  # relative to theme file
         if not isinstance(source, str):
             raise ValidationError(
-                f"JSON body for AssetResource source should be a string, not {type(source)}",
-                2,
+                f"JSON body for AssetResource source should be a string, not {source.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
             )
         # IF there is a crop, it must be exactly four integers.
         if "crop" in json_body:
             crop = json_body["crop"]
             if not isinstance(crop, list):
                 raise ValidationError(
-                    f"JSON body for AssetResource crop should be a list, not {type(crop)}",
-                    2,
+                    f"JSON body for AssetResource crop should be a list, not {crop.__class__.__name__}",
+                    ValidationError.ErrorCode.WRONG_TYPE,
                 )
             if len(crop) != 4:
                 raise ValidationError(
                     f'"crop" must be exactly 4 integers or omitted, got {len(crop)} instead',
-                    2,
+                    ValidationError.ErrorCode.INVALID_VALUE,
                 )
             intermediate: typing.List[int] = []
             for crop_att in crop:
@@ -139,9 +142,10 @@ class AssetResource:
                     intermediate.append(int(crop_att))
                 except (ValueError, AssertionError):
                     raise ValidationError(
-                        f"The cropping value {crop_att} must be an integer that is at least 0.",
-                        2,
+                        f"Cropping values must be integers that are at least 0. (got {crop_att})",
+                        ValidationError.ErrorCode.INVALID_VALUE,
                     )
+            # noinspection PyTypeChecker
             new_crop: typing.Optional[typing.Tuple[int, int, int, int]] = tuple(
                 intermediate
             )

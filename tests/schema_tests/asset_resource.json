@@ -17,9 +17,55 @@
     "kwargs": {
       "theme_directory": "tests/schema_tests"
     },
+    "test": []
+  },
+  {
+    "expect": {
+      "ok": false,
+      "errorType": "ValidationError"
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": 6
+  },
+  {
+    "expect": {
+      "ok": false,
+      "errorType": "ValidationError"
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
     "test": {
       "source": "fakesrc",
       "crop": []
+    }
+  },
+  {
+    "expect": {
+      "ok": false,
+      "errorType": "ValidationError"
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": {
+      "source": "fakesrc",
+      "crop": {}
+    }
+  },
+  {
+    "expect": {
+      "ok": false,
+      "errorType": "ValidationError"
+    },
+    "kwargs": {
+      "theme_directory": "tests/schema_tests"
+    },
+    "test": {
+      "source": "fakesrc",
+      "crop": 2
     }
   },
   {
