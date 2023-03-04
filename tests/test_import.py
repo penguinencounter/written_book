@@ -2,7 +2,7 @@ import os
 import pprint
 from collections import defaultdict
 from json import load
-from typing import Dict, List, NamedTuple
+from typing import Callable, Dict, List, NamedTuple
 
 import pytest
 
@@ -65,7 +65,7 @@ def dump_test_case(jtc: JsonTestCase):
         print(f"    {key} = {pprint.pformat(val, indent=1, compact=True)}")
 
 
-def run_test(jtc: JsonTestCase, target_func: callable):
+def run_test(jtc: JsonTestCase, target_func: Callable):
     if jtc.expect.ok:
         target_func(jtc.test, **jtc.kwargs)
     else:
