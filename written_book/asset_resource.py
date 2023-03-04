@@ -239,6 +239,8 @@ class Anchor2D:
         def valid(y_anchor: "Anchor2D.Y", anchor: "Anchor2D.AnchorMode") -> bool:
             return y_anchor.value[1] is None or anchor.value in y_anchor.value[1]
 
+    ONLY_ONE_OF = (X.INSIDE_LEFT, X.INSIDE_RIGHT, Y.INSIDE_TOP, Y.INSIDE_BOTTOM)
+
     @staticmethod
     def valid(
         x_anchor: typing.Union[X, str],
@@ -251,7 +253,13 @@ class Anchor2D:
             y_anchor = Anchor2D.Y(y_anchor.upper())
         if isinstance(anchor, str):
             anchor = Anchor2D.AnchorMode(anchor.upper())
-        return Anchor2D.X.valid(x_anchor, anchor) and Anchor2D.Y.valid(y_anchor, anchor)
+        return (
+            Anchor2D.X.valid(x_anchor, anchor)
+            and Anchor2D.Y.valid(y_anchor, anchor)
+            and not (
+                x_anchor in Anchor2D.ONLY_ONE_OF and y_anchor in Anchor2D.ONLY_ONE_OF
+            )
+        )
 
 
 @enum.unique
