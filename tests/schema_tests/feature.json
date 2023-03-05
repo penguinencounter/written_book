@@ -55,9 +55,25 @@
     "kwargs": {
       "theme_directory": "tests/schema_tests"
     },
+    "iterate": {
+      "feature": [
+        "top_left_corner",
+        "top_right_corner",
+        "bottom_left_corner",
+        "bottom_right_corner",
+        "block_quote_top_cap",
+        "block_quote_bottom_cap",
+        "code_top_left_corner",
+        "code_top_right_corner",
+        "code_bottom_left_corner",
+        "code_bottom_right_corner",
+        "horizontal_rule_left_cap",
+        "horizontal_rule_right_cap",
+        "bullet"
+      ]
+    },
     "test": {
-      "source": "example.png",
-      "feature": "top_left_corner"
+      "source": "example.png"
     }
   }
 ]

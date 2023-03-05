@@ -1,13 +1,16 @@
+import copy
+import itertools
 import os
 import pprint
+import sys
 from collections import defaultdict
 from json import load
-from typing import Any, Callable, Dict, List, NamedTuple
+from typing import Any, Callable, Dict, List, NamedTuple, Optional
 
 import pytest
 
 from written_book.asset_resource import AssetResource, Feature
-from written_book.types import JSONObject
+from written_book.types import JSONObject, JSON
 
 
 class JsonTestCase(NamedTuple):
@@ -33,18 +36,31 @@ def compile_test_targets() -> Dict[str, List[JsonTestCase]]:
 
     for path in all_target_paths:
         with open(path) as f:
-            jtests = load(f)
+            jtests: List[JSONObject] = load(f)
             for test in jtests:
                 assert "expect" in test
                 assert "test" in test
                 exp = test.pop("expect")
                 exp = JsonTestCase.Expect(**exp)
-                tc = JsonTestCase(**test, expect=exp)
-                compiled[
-                    os.path.relpath(path, SCHEMA_TEST_DIR).replace("\\", "/")
-                ].append(
-                    tc
-                )  # always forward slashes
+                iterate: Dict[str, List[JSON]] = test.pop("iterate", {})
+                # apply the key to all the values, so (key, value), (key, value), ...
+                bound = []
+                for key, values in iterate.items():
+                    bound.append([(key, v) for v in values])
+                # permute all the values
+                for perm in itertools.product(*bound):
+                    tmod = copy.deepcopy(test)
+                    # attach permutations
+                    if isinstance(tmod["test"], dict):
+                        new_test = tmod["test"]
+                        new_test.update({k: v for k, v in perm})
+                        tmod["test"] = new_test
+                    tc = JsonTestCase(**tmod, expect=exp)
+                    compiled[
+                        os.path.relpath(path, SCHEMA_TEST_DIR).replace("\\", "/")
+                    ].append(
+                        tc
+                    )  # always forward slashes
     return compiled
 
 
