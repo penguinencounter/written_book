@@ -4,7 +4,7 @@ import os
 import pprint
 from collections import defaultdict
 from json import load
-from typing import Any, Callable, Dict, List, NamedTuple, cast, Tuple
+from typing import Any, Callable, Dict, List, NamedTuple, Tuple, cast
 
 import pytest
 
