@@ -1,10 +1,8 @@
 import enum
-import functools
 import os
 import os.path
 import re
 import typing
-from functools import partial
 
 from PIL import Image
 
@@ -365,6 +363,41 @@ class Feature2DOverride(FeatureOverride):
         self.x = x
         self.y = y
 
+    @classmethod
+    def import_(cls, json_body: JSON, theme_directory: typing.Optional[str] = None):
+        if not isinstance(json_body, dict):
+            raise ValidationError(
+                f"JSON body for FeatureOverride should be a dict, not {json_body.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        asset = AssetResource.import_(json_body, theme_directory)
+        if "index" not in json_body:
+            raise ValidationError(
+                'FeatureOverride(s) require a "index".',
+                ValidationError.ErrorCode.MISSING_VALUE,
+            )
+        index = json_body["index"]
+        if not isinstance(index, list):
+            raise ValidationError(
+                f"FeatureOverride index should be a list, not {index.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        if len(index) != 2:
+            raise ValidationError(
+                f"FeatureOverride index should be a list of length 2, not length {len(index)}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        if not all(
+            isinstance(i, int) or (isinstance(i, float) and i.is_integer())
+            for i in index
+        ):
+            raise ValidationError(
+                f"FeatureOverride index should be a list of ints. (provided: {index})",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        index = typing.cast(typing.List[int | float], index)
+        return cls(asset, int(index[0]), int(index[1]))
+
 
 class Feature2D(Feature):
     FEATURE_TYPES = ["background", "code_background"]
@@ -504,6 +537,9 @@ class Feature2D(Feature):
                 f"JSON body for Feature overrides should be a list, not {overrides.__class__.__name__}",
                 ValidationError.ErrorCode.WRONG_TYPE,
             )
+
+        # might throw, OK
+        overrides = [Feature2DOverride.import_(o, theme_directory) for o in overrides]
 
         check_feature(json_body, cls.FEATURE_TYPES)
 

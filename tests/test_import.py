@@ -2,10 +2,9 @@ import copy
 import itertools
 import os
 import pprint
-import sys
 from collections import defaultdict
 from json import load
-from typing import Any, Callable, Dict, List, NamedTuple, Optional
+from typing import Any, Callable, Dict, List, NamedTuple, cast, Tuple
 
 import pytest
 
@@ -19,7 +18,7 @@ class JsonTestCase(NamedTuple):
         errorType: str = ""
 
     expect: Expect
-    test: JSONObject
+    test: JSON
     kwargs: JSONObject = {}
 
 
@@ -40,11 +39,15 @@ def compile_test_targets() -> Dict[str, List[JsonTestCase]]:
             for test in jtests:
                 assert "expect" in test
                 assert "test" in test
-                exp = test.pop("expect")
-                exp = JsonTestCase.Expect(**exp)
-                iterate: Dict[str, List[JSON]] = test.pop("iterate", {})
+                exp_j = test.pop("expect")
+                exp = JsonTestCase.Expect(**exp_j)  # type: ignore
+                # type checker sucks for this sort of thing.
+                # the test suite is supposed to be quick and dirty, not safe.
+                iterate: Dict[str, List[JSON]] = cast(
+                    Dict[str, List[JSON]], test.pop("iterate", {})
+                )
                 # apply the key to all the values, so (key, value), (key, value), ...
-                bound = []
+                bound: List[List[Tuple[str, JSON]]] = []
                 for key, values in iterate.items():
                     bound.append([(key, v) for v in values])
                 # permute all the values
@@ -52,7 +55,7 @@ def compile_test_targets() -> Dict[str, List[JsonTestCase]]:
                     tmod = copy.deepcopy(test)
                     # attach permutations
                     if isinstance(tmod["test"], dict):
-                        new_test = tmod["test"]
+                        new_test: JSONObject = tmod["test"]
                         new_test.update({k: v for k, v in perm})
                         tmod["test"] = new_test
                     tc = JsonTestCase(**tmod, expect=exp)
