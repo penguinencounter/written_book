@@ -414,23 +414,27 @@ class Feature2D(Feature):
             r"(?:^|(?<=[^A-Za-z0-9]))(\w+)(?=[^A-Za-z0-9]|$)", code.lower()
         )
         if 1 < len(words) > 2:
-            raise ValueError(
-                f"Invalid justify code: {code}; must be 1 or 2 words, got {len(words)}"
+            raise ValidationError(
+                f"Invalid justify code: {code}; must be 1 or 2 words, got {len(words)}",
+                ValidationError.ErrorCode.INVALID_VALUE,
             )
         if len(words) == 1:
             if words[0] in Justify2D.one_word_aliases:
                 words = Justify2D.one_word_aliases[words[0]]
             else:
-                raise ValueError(
-                    f"Invalid justify code: {code}; the 1-word code '{words[0]}' is not supported"
+                raise ValidationError(
+                    f"Invalid justify code: {code}; the 1-word code '{words[0]}' is not supported",
+                    ValidationError.ErrorCode.INVALID_VALUE,
                 )
         if words[1] not in Justify2D.x_word:
-            raise ValueError(
-                f"Invalid justify code: {code}; the second word '{words[1]}' is not a supported x justification"
+            raise ValidationError(
+                f"Invalid justify code: {code}; the second word '{words[1]}' is not a supported x justification",
+                ValidationError.ErrorCode.INVALID_VALUE,
             )
         if words[0] not in Justify2D.y_word:
-            raise ValueError(
-                f"Invalid justify code: {code}; the first word '{words[0]}' is not a supported y justification"
+            raise ValidationError(
+                f"Invalid justify code: {code}; the first word '{words[0]}' is not a supported y justification",
+                ValidationError.ErrorCode.INVALID_VALUE,
             )
         justify = Justify2D.x_word[words[1]], Justify2D.y_word[words[0]]
         return justify

@@ -51,7 +51,7 @@
   {
     "expect": {
       "ok": false,
-      "errorType": "ValueError"
+      "errorType": "ValidationError"
     },
     "kwargs": {
       "theme_directory": "tests/schema_tests"
