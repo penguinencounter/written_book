@@ -22,20 +22,6 @@
         "source"
       ]
     },
-    "overrides": {
-      "description": "Overrides of the theme. For example, changing one tile in the background",
-      "type": "array",
-      "items": {
-        "allOf": [
-          {
-            "$ref": "#/definitions/sourced"
-          },
-          {
-            "$ref": "#/definitions/feature_override"
-          }
-        ]
-      }
-    },
     "overlays": {
       "description": "Overlays that are composited atop the rendered background",
       "type": "array",
@@ -93,6 +79,12 @@
                 "horizontal_rule_right_cap",
                 "bullet"
               ]
+            },
+            "overrides": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/feature_override_0d"
+              }
             }
           }
         },
@@ -113,10 +105,16 @@
                 "code_right_edge",
                 "horizontal_rule"
               ]
+            },
+            "overrides": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/feature_override_1d"
+              }
+            },
+            "justify": {
+              "$ref": "#/definitions/1d_justify"
             }
-          },
-          "justify": {
-            "$ref": "#/definitions/1d_justify"
           }
         },
         {
@@ -129,56 +127,53 @@
                 "code_background"
               ]
             },
+            "overrides": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/feature_override_2d"
+              }
+            },
             "justify": {
               "$ref": "#/definitions/2d_justify"
             }
           }
         }
       ],
-      "required": ["feature"]
+      "required": [
+        "feature"
+      ]
     },
-    "feature_override": {
-      "oneOf": [
+    "feature_override_0d": {
+      "description": "Overrides of the theme. For example, changing one tile in the background",
+      "allOf": [
         {
-          "properties": {
-            "feature": {
-              "description": "The feature that is being described",
-              "type": "string",
-              "enum": [
-                "top_left_corner",
-                "top_right_corner",
-                "bottom_left_corner",
-                "bottom_right_corner"
-              ]
-            }
-          }
+          "$ref": "#/definitions/sourced"
+        }
+      ]
+    },
+    "feature_override_1d": {
+      "description": "Overrides of the theme. For example, changing one tile in the background",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sourced"
         },
         {
           "properties": {
-            "feature": {
-              "description": "The feature that is being described",
-              "type": "string",
-              "enum": [
-                "top_edge",
-                "bottom_edge",
-                "left_edge",
-                "right_edge"
-              ]
+            "index": {
+              "type": "number"
             }
-          },
-          "index": {
-            "type": "number"
           }
+        }
+      ]
+    },
+    "feature_override_2d": {
+      "description": "Overrides of the theme. For example, changing one tile in the background",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sourced"
         },
         {
           "properties": {
-            "feature": {
-              "description": "The feature that is being described",
-              "type": "string",
-              "enum": [
-                "background"
-              ]
-            },
             "index": {
               "type": "array",
               "minItems": 2,
@@ -189,8 +184,7 @@
             }
           }
         }
-      ],
-      "required": ["feature"]
+      ]
     },
     "2d_justify": {
       "type": "string",

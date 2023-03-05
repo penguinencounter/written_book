@@ -9,8 +9,8 @@ from typing import Any, Callable, Dict, List, NamedTuple, Optional
 
 import pytest
 
-from written_book.asset_resource import AssetResource, Feature
-from written_book.types import JSONObject, JSON
+from written_book.asset_resource import AssetResource, Feature, Feature2D
+from written_book.types import JSON, JSONObject
 
 
 class JsonTestCase(NamedTuple):
@@ -101,3 +101,9 @@ def test_import_asset_resource(test_data: JsonTestCase):
 def test_import_feature(test_data: JsonTestCase):
     dump_test_case(test_data)
     run_test(test_data, Feature.import_)
+
+
+@pytest.mark.parametrize("test_data", compiled_tests["feature2d.json"])
+def test_import_feature2d(test_data: JsonTestCase):
+    dump_test_case(test_data)
+    run_test(test_data, Feature2D.import_)

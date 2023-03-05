@@ -1,13 +1,15 @@
 import enum
+import functools
 import os
 import os.path
 import re
 import typing
+from functools import partial
 
 from PIL import Image
 
 from .exceptions import ValidationError
-from .types import JSON
+from .types import JSON, JSONObject
 
 
 def _normalize(path: str) -> str:
@@ -36,6 +38,34 @@ def odd(value: int) -> int:
     :return: The next odd number.
     """
     return value + 1 if value % 2 == 0 else value
+
+
+def check_feature(json_body: JSONObject, allowed: typing.List[str]) -> str:
+    if "feature" not in json_body:
+        raise ValidationError(
+            'Feature(s) require a "feature".',
+            ValidationError.ErrorCode.MISSING_VALUE,
+        )
+    feature = json_body["feature"]
+    if not isinstance(feature, str):
+        raise ValidationError(
+            f'Feature(s) require a "feature" of type string, not {feature.__class__.__name__}.',
+            ValidationError.ErrorCode.WRONG_TYPE,
+        )
+
+    if feature not in allowed:
+        msg = (
+            f'JSON body for Feature feature should be a valid 0-dimensional feature, not "{feature}".\n'
+            f"Valid features are:\n"
+        )
+        for feature_type in allowed:
+            msg += f"  {feature_type}\n"
+        msg = msg[:-1]
+        raise ValidationError(
+            msg,
+            ValidationError.ErrorCode.INVALID_VALUE,
+        )
+    return feature
 
 
 shared_asset_cache: typing.Dict[str, Image.Image] = {}
@@ -198,25 +228,7 @@ class Feature:
                 'Feature(s) require a "feature".',
                 ValidationError.ErrorCode.MISSING_VALUE,
             )
-        feature = json_body["feature"]
-        if not isinstance(feature, str):
-            raise ValidationError(
-                f"JSON body for Feature feature should be a string, not {feature.__class__.__name__}",
-                ValidationError.ErrorCode.WRONG_TYPE,
-            )
-
-        if feature not in cls.FEATURE_TYPES:
-            msg = (
-                f'JSON body for Feature feature should be a valid 0-dimensional feature, not "{feature}".\n'
-                f"Valid features are:\n"
-            )
-            for feature_type in cls.FEATURE_TYPES:
-                msg += f"  {feature_type}\n"
-            msg = msg[:-1]
-            raise ValidationError(
-                msg,
-                ValidationError.ErrorCode.INVALID_VALUE,
-            )
+        check_feature(json_body, cls.FEATURE_TYPES)
 
         return cls(asset)
 
@@ -355,6 +367,8 @@ class Feature2DOverride(FeatureOverride):
 
 
 class Feature2D(Feature):
+    FEATURE_TYPES = ["background", "code_background"]
+
     @staticmethod
     def get_justify(code: str) -> typing.Tuple[Justify2D.X, Justify2D.Y]:
         """
@@ -377,6 +391,14 @@ class Feature2D(Feature):
                 raise ValueError(
                     f"Invalid justify code: {code}; the 1-word code '{words[0]}' is not supported"
                 )
+        if words[1] not in Justify2D.x_word:
+            raise ValueError(
+                f"Invalid justify code: {code}; the second word '{words[1]}' is not a supported x justification"
+            )
+        if words[0] not in Justify2D.y_word:
+            raise ValueError(
+                f"Invalid justify code: {code}; the first word '{words[0]}' is not a supported y justification"
+            )
         justify = Justify2D.x_word[words[1]], Justify2D.y_word[words[0]]
         return justify
 
@@ -387,13 +409,17 @@ class Feature2D(Feature):
         overrides: typing.Optional[typing.List[Feature2DOverride]] = None,
     ):
         super().__init__(asset)
+        self._overrides = {}
+        self.set_overrides(overrides)
         if isinstance(justify, str):
             justify = self.get_justify(justify)
         self.justifyX, self.justifyY = justify
-        self.overrides: typing.Dict[typing.Tuple[int, int], Feature2DOverride] = {
+
+    def set_overrides(self, overrides: typing.Optional[typing.List[Feature2DOverride]]):
+        self._overrides: typing.Dict[typing.Tuple[int, int], Feature2DOverride] = {
             (o.x, o.y): o for o in (overrides or [])
         }
-        for override in self.overrides.values():
+        for override in self._overrides.values():
             if override.asset.get().size != self._asset.get().size:
                 raise ValueError(
                     "Override asset size must match the base asset size.\n    "
@@ -438,8 +464,8 @@ class Feature2D(Feature):
         for x in range(tile_count[0]):
             for y in range(tile_count[1]):
                 vx, vy = x - center_pos[0], y - center_pos[1]
-                if (vx, vy) in self.overrides:
-                    override = self.overrides[(vx, vy)]
+                if (vx, vy) in self._overrides:
+                    override = self._overrides[(vx, vy)]
                     tiled.paste(override.asset.get(), (x * img.width, y * img.height))
                 else:
                     tiled.paste(img, (x * img.width, y * img.height))
@@ -457,6 +483,31 @@ class Feature2D(Feature):
         crop_to = [crop_from[0] + width, crop_from[1] + height]
         tiled = tiled.crop((crop_from[0], crop_from[1], crop_to[0], crop_to[1]))
         return tiled
+
+    @classmethod
+    def import_(cls, json_body: JSON, theme_directory: typing.Optional[str] = None):
+        if not isinstance(json_body, dict):
+            raise ValidationError(
+                f"JSON body for Feature should be a dict, not {json_body.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        asset = AssetResource.import_(json_body, theme_directory)
+        justify = json_body.get("justify", "top left")
+        if not isinstance(justify, str):
+            raise ValidationError(
+                f"JSON body for Feature justify should be a string, not {justify.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+        overrides = json_body.get("overrides", [])
+        if not isinstance(overrides, list):
+            raise ValidationError(
+                f"JSON body for Feature overrides should be a list, not {overrides.__class__.__name__}",
+                ValidationError.ErrorCode.WRONG_TYPE,
+            )
+
+        check_feature(json_body, cls.FEATURE_TYPES)
+
+        return cls(asset, justify, overrides)
 
 
 class Feature1DOverride(FeatureOverride):
