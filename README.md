@@ -2,7 +2,7 @@
 
 # On hold
 
-## Currently working on `pixelscribe`, the renderer powering this project, in a seperate repository..
+## Currently working on `pixelscribe`, the renderer powering this project, in a seperate repository.
 
 [![GitHub Actions](https://github.com/penguinencounter/written_book/workflows/CI/badge.svg)](https://github.com/FIXME/FIXME/actions)
 [![PyPI](https://img.shields.io/pypi/v/FIXME.svg)](https://pypi.org/project/FIXME/)
