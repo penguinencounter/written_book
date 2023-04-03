@@ -24,7 +24,7 @@ include = ["written_book/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.8"
 beet = ">=0.45.3"
-pillow = "^9.4.0"
+pillow = "^9.5.0"
 cmarkgfm = "^2022.10.27"
 beautifulsoup4 = "^4.11.2"
 
