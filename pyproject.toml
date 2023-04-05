@@ -26,7 +26,7 @@ python = "^3.8"
 beet = ">=0.45.3"
 pillow = "^9.4.0"
 cmarkgfm = "^2022.10.27"
-beautifulsoup4 = "^4.11.2"
+beautifulsoup4 = "^4.12.1"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.2.0"
